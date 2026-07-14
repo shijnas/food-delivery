@@ -36,7 +36,7 @@ export default function TrackOrderClient({
   }, []);
 
   return (
-    <div className="pt-20 px-4 max-w-2xl mx-auto pb-10">
+    <div style={{ width: "100%", maxWidth: 640, margin: "0 auto", padding: "96px 20px 40px", boxSizing: "border-box" }}>
       <h1 className="text-white text-2xl font-bold mb-2">Live Tracking</h1>
       <p className="text-gray-500 text-sm mb-6">Order #{order.id}</p>
 
