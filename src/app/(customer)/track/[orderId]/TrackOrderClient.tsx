@@ -27,11 +27,33 @@ export default function TrackOrderClient({
 
   const order = mockOrders.find((o) => o.id === orderId) || mockOrders[0];
 
-  // Simulate live status updates
+  const [driverPosition, setDriverPosition] = useState({ x: 280, y: 60 });
+
+  // Simulate live status updates and animate driver position
   useEffect(() => {
     const interval = setInterval(() => {
       setEta((prev) => Math.max(0, prev - 1));
     }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    let t = 0;
+    const interval = setInterval(() => {
+      t = (t + 0.4) % 100;
+      let x = 0;
+      let y = 0;
+      if (t < 50) {
+        const p = t / 50;
+        x = 280 + p * (150 - 280);
+        y = 60 + p * (110 - 60);
+      } else {
+        const p = (t - 50) / 50;
+        x = 150 + p * (50 - 150);
+        y = 110 + p * (180 - 110);
+      }
+      setDriverPosition({ x, y });
+    }, 80);
     return () => clearInterval(interval);
   }, []);
 
@@ -40,32 +62,67 @@ export default function TrackOrderClient({
       <h1 className="text-white text-2xl font-bold mb-2">Live Tracking</h1>
       <p className="text-gray-500 text-sm mb-6">Order #{order.id}</p>
 
-      {/* Map Placeholder */}
-      <div className="relative h-64 bg-[#181424] border border-purple-500/20 rounded-3xl overflow-hidden mb-6">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-5xl mb-3 float">🗺️</div>
-            <p className="text-gray-500 text-sm">Live map tracking</p>
-            <p className="text-gray-600 text-xs">Add Google Maps API key to enable</p>
-          </div>
+      {/* Real Live Map */}
+      <div className="relative h-72 bg-[#12101C] border border-purple-500/20 rounded-3xl overflow-hidden mb-6">
+        {/* Grid lines background */}
+        <svg width="100%" height="100%" opacity="0.15" className="absolute inset-0">
+          <pattern id="navGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#fff" strokeWidth="1" />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#navGrid)" />
+        </svg>
+
+        {/* Route Line */}
+        <svg width="100%" height="100%" className="absolute inset-0 pointer-events-none">
+          <path d="M 50 180 L 150 110 L 280 60" fill="none" stroke="#8B5CF6" strokeWidth="4" strokeDasharray="6 4" />
+        </svg>
+
+        {/* You / Delivery Pin */}
+        <div className="absolute bottom-10 left-10 flex flex-col items-center">
+          <MapPin className="h-6 w-6 text-blue-400 fill-blue-400 filter drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]" />
+          <span className="text-[9px] bg-black/80 border border-white/10 px-1.5 py-0.5 rounded text-white mt-1 font-bold">You</span>
         </div>
-        {/* Fake driver marker */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="relative">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-neon-purple text-white text-xl animate-pulse">
+
+        {/* Dynamic Driver Marker */}
+        <div 
+          className="absolute -translate-x-1/2 -translate-y-1/2 transition-all duration-100 ease-linear"
+          style={{ left: driverPosition.x, top: driverPosition.y }}
+        >
+          <div className="relative flex flex-col items-center">
+            <div className="w-9 h-9 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/30 text-white text-base border border-white/25">
               🛵
             </div>
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-purple-600 rotate-45" />
+            <span className="text-[8px] bg-purple-950/90 border border-purple-500/30 px-1 py-0.2 rounded text-purple-300 mt-1 font-extrabold whitespace-nowrap">Alex (Live)</span>
           </div>
+        </div>
+
+        {/* Restaurant Pin */}
+        <div className="absolute top-10 right-20 flex flex-col items-center">
+          <MapPin className="h-6 w-6 text-pink-500 fill-pink-500 filter drop-shadow-[0_0_8px_rgba(236,72,153,0.5)]" />
+          <span className="text-[9px] bg-black/80 border border-white/10 px-1.5 py-0.5 rounded text-white mt-1 font-bold whitespace-nowrap">{order.restaurant.name}</span>
         </div>
 
         {/* ETA overlay */}
         <div className="absolute top-3 left-3 right-3 flex justify-between items-center">
-          <div className="bg-[#181424]/90 backdrop-blur-sm border border-white/10 rounded-xl px-3 py-2">
-            <p className="text-gray-500 text-xs">ETA</p>
-            <p className="text-white font-bold text-lg">{eta} min</p>
+          <div className="bg-[#181424]/90 backdrop-blur-md border border-white/[0.08] rounded-2xl px-4 py-2.5 flex items-center gap-3">
+            <Clock className="h-4 w-4 text-purple-400" />
+            <div>
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-wider">Estimated Time</p>
+              <p className="text-white font-extrabold text-sm">{eta} mins remaining</p>
+            </div>
           </div>
-          <Badge variant="purple" dot>Live</Badge>
+          <Badge variant="purple" dot className="px-3.5 py-1 text-xs">Live Tracking</Badge>
+        </div>
+
+        {/* Bottom Status bar */}
+        <div className="absolute bottom-3 left-3 right-3 bg-[#1C192E]/90 border border-white/[0.06] rounded-2xl p-3 flex justify-between items-center backdrop-blur-sm">
+          <div>
+            <p className="text-gray-400 text-[10px]">Traffic status</p>
+            <p className="text-green-400 text-xs font-bold mt-0.5">Light Traffic • Clear path</p>
+          </div>
+          <span className="text-[10px] font-mono text-purple-300 font-bold bg-purple-500/10 px-2.5 py-1 rounded-lg border border-purple-500/20">
+            GPS Signal: Strong
+          </span>
         </div>
       </div>
 
