@@ -141,11 +141,17 @@ export default function ProfilePage() {
       </div>
 
       {/* Sign Out Button */}
-      <button style={{
-        width: "100%", height: 50, borderRadius: 16, border: "none", cursor: "pointer",
-        background: "rgba(239,68,68,0.12)", color: "#FCA5A5", fontSize: 14, fontWeight: 700,
-        display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-      }}>
+      <button 
+        onClick={() => {
+          localStorage.removeItem("restaurant_role");
+          window.location.href = "/login";
+        }}
+        style={{
+          width: "100%", height: 50, borderRadius: 16, border: "none", cursor: "pointer",
+          background: "rgba(239,68,68,0.12)", color: "#FCA5A5", fontSize: 14, fontWeight: 700,
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+        }}
+      >
         <LogOut style={{ width: 16, height: 16 }} /> Sign Out
       </button>
 

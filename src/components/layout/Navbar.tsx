@@ -162,14 +162,20 @@ export default function Navbar() {
                         </Link>
                       );
                     })}
-                    <button style={{
-                      width: "100%", display: "flex", alignItems: "center", gap: 10,
-                      padding: "10px 12px", borderRadius: 10, marginTop: 4,
-                      background: "none", border: "none", cursor: "pointer",
-                      color: "#F87171", fontSize: 13,
-                    }}>
-                      <LogOut style={{ width: 15, height: 15 }} /> Sign Out
-                    </button>
+                     <button 
+                      onClick={() => {
+                        localStorage.removeItem("restaurant_role");
+                        window.location.href = "/login";
+                      }}
+                      style={{
+                        width: "100%", display: "flex", alignItems: "center", gap: 10,
+                        padding: "10px 12px", borderRadius: 10, marginTop: 4,
+                        background: "none", border: "none", cursor: "pointer",
+                        color: "#F87171", fontSize: 13,
+                      }}
+                     >
+                       <LogOut style={{ width: 15, height: 15 }} /> Sign Out
+                     </button>
                   </div>
                 </div>
               )}
