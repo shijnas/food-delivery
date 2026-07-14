@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Kayikk</string>
+    <string name="title_activity_main">Kayikk</string>
+    <string name="package_name">com.kayikk.app</string>
+    <string name="custom_url_scheme">com.kayikk.app</string>
+</resources>

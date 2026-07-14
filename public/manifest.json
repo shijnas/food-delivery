@@ -1,0 +1,17 @@
+{
+  "name": "Kayikk",
+  "short_name": "Kayikk",
+  "description": "Premium Food Delivery",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#0D0B14",
+  "theme_color": "#8B5CF6",
+  "icons": [
+    {
+      "src": "/logo.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ]
+}
